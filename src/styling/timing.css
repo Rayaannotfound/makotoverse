@@ -1,0 +1,13 @@
+.time-based-message {
+    animation: gradientAnimation 10s ease infinite alternate;
+                                                                             ;
+  }
+  
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0%;
+    }
+    100% {
+      background-position: 100%;
+    }
+  }

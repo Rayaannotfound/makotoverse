@@ -1,0 +1,193 @@
+.boxes-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 12px;
+}
+
+.left {
+  padding: 20%;
+}
+
+.box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 100px;
+  margin: 10px;
+  background-color: #3498db;
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  font-size: 14px;
+  word-spacing: 2px;
+}
+
+.blue {
+  background: linear-gradient(135deg, #fffffff5, #3a4b8a, #ffffff98);
+  padding: 1px;
+  border-radius: 1.2rem;
+  box-shadow: 0px 1rem 1.5rem -0.9rem #000000e1;
+  max-width: 300px;
+}
+
+.newscard {
+  font-size: 1rem;
+  color: #bec4cf;
+  background: linear-gradient(135deg, #0d1120 0%, #3a4b8a 43%, #0d1120 100%);
+  padding: 1.5rem;
+  border-radius: 1.2rem;
+  width: 300px;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.task-box {
+  padding: 10px;
+  border: 1px solid #ccc;
+  min-height: 100px;
+  background-image: url('../photos/notification.jpg');
+  word-wrap: break-word;
+  overflow: auto;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.task-box p {
+  margin: 5px 0;
+}
+
+.task-box .button-link {
+  align-self: center;
+  margin-top: 10px;
+}
+
+.newsback {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: no-repeat center center;
+  background-size: cover;
+}
+
+.newsback::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('../photos/vox.gif') no-repeat center center;
+  background-size: cover;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.allnews {
+  justify-content: center;
+  margin: 20px;
+  padding: 30px;
+}
+
+.allnewsback {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: no-repeat center center;
+  background-size: cover;
+  margin: 20px;
+  padding: 30px;
+}
+
+.allnewsback::before {
+  margin: 20px;
+  padding: 30px;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('../photos/theowlhouse.jpg') no-repeat center center;
+  background-size: cover;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.thisnews {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: no-repeat center center;
+  background-size: cover;
+}
+
+.thisnews::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('../photos/poke.jpg') no-repeat center center;
+  background-size: cover;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.cardyay {
+  border-radius: 20px;
+  background: #f5f5f5;
+  position: relative;
+  padding: 1.8rem;
+  border: 2px solid #c3c6ce;
+  transition: 0.5s ease-out;
+  overflow: visible;
+}
+
+.card-details {
+  color: black;
+  height: 100%;
+  gap: 0.5em;
+  display: grid;
+  place-content: center;
+}
+
+.card-button {
+  transform: translate(-50%, 125%);
+  border-radius: 1rem;
+  border: none;
+  background-color: #008bf8;
+  color: #fff;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  opacity: 0;
+  transition: 0.3s ease-out;
+}
+
+.text-body {
+  color: rgb(134, 134, 134);
+}
+
+.text-title {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.card:hover {
+  border-color: #008bf8;
+  box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.25);
+}
+
+.card:hover .card-button {
+  transform: translate(-50%, 50%);
+  opacity: 1;
+}

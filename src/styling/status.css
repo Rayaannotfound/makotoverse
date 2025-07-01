@@ -1,0 +1,210 @@
+@keyframes rainbow-animation {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+  }
+  
+  .name {
+    font-size: 25px;
+    font-weight: bold;
+    background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet, red);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+    animation: rainbow-animation 11s ease infinite;
+  }
+  .buttonui {
+    padding: 17px 20px;
+    border-radius: 12px;
+    border: 0;
+    background-color: rgb(9, 120, 164);
+    letter-spacing: 1.5px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    box-shadow: rgb(101, 8, 215) 0px 10px 0px 0px;
+    color: hsl(0, 19%, 92%);
+    cursor: pointer;
+  }
+  
+  .buttonui:hover {
+    box-shadow: rgb(201, 46, 70) 0px 7px 0px 0px;
+  }
+  
+  .buttonui:active {
+    background-color: rgb(255, 56, 86);
+  
+    box-shadow: rgb(201, 46, 70) 0px 0px 0px 0px;
+    transform: translateY(5px);
+    transition: 200ms;
+  }
+  .levellabel {
+    font-size: 20px;
+    font-weight: bold;
+    background: linear-gradient(90deg, red, orange, yellow, green, blue, rgb(246, 17, 40), violet, red);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+    animation: rainbow-animation 8s ease infinite;
+  }
+  .level {
+    font-size: 25px;
+    font-weight: bold;
+    background: linear-gradient(90deg, red, orange, yellow, rgb(77, 234, 77), blue, rgb(22, 235, 192), violet, red);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+    animation: rainbow-animation 12s ease infinite;
+  }
+
+  .EXPlabel{font-size: 26px;
+    font-weight: bold;
+    background: linear-gradient(90deg, red, rgb(72, 255, 0), yellow, rgb(181, 204, 181), blue, rgb(235, 166, 19), violet, red);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+    animation: rainbow-animation 9s ease infinite;
+  }
+
+  .HPlabel{font-size: 29px;
+    font-weight: bold;
+    background: linear-gradient(90deg, red, rgb(72, 255, 0), rgb(20, 237, 179), rgb(3, 80, 3), blue, rgb(235, 166, 19), violet, red);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+    animation: rainbow-animation 17s ease infinite;
+  }
+  .health{
+    font-size: 23px;
+    font-weight: bold;
+    background: linear-gradient(90deg, rgb(255, 0, 200), rgb(72, 255, 0), rgb(0, 221, 255), rgb(181, 204, 181), blue, rgb(157, 64, 224), violet, red);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+    animation: rainbow-animation 4s ease infinite;
+
+  }
+
+  .next{
+    font-size: 25px;
+    font-weight: bold;
+    background: linear-gradient(90deg, rgb(255, 0, 200), rgb(72, 255, 0), rgb(0, 221, 255), rgb(181, 204, 181), rgba(22, 22, 225, 0.79), rgb(139, 7, 234), violet, red);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+    animation: rainbow-animation 15s ease infinite;
+  }
+  .nextdesc{
+
+    font-size: 17px;
+    font-weight: bold;
+    background: linear-gradient(90deg, rgb(237, 12, 188),rgb(251, 255, 0), rgb(0, 221, 255), rgb(181, 204, 181), rgba(22, 22, 225, 0.79), rgb(139, 7, 234), violet, red);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+    animation: rainbow-animation 15s ease infinite;
+  }
+
+  .experience{
+
+    font-size: 25px;
+    font-weight: bold;
+    background: linear-gradient(90deg, rgb(196, 193, 90),rgb(251, 255, 0), rgb(202, 199, 94), rgb(234, 237, 207), rgba(222, 241, 125, 0.79), rgb(215, 233, 151), rgb(231, 231, 227), rgb(234, 237, 69));
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+    animation: rainbow-animation 4s ease infinite;
+  }
+
+  .youcanlevelup{
+
+    font-size: 25px;
+    font-weight: bold;
+    background: linear-gradient(90deg, rgb(196, 193, 90),rgb(251, 255, 0), rgb(202, 199, 94), rgb(234, 237, 207), rgba(222, 241, 125, 0.79), rgb(215, 233, 151), rgb(231, 231, 227), rgb(234, 237, 69));
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+    animation: rainbow-animation 4s ease infinite;
+  }
+
+
+  .expbutton {
+    all: unset;
+    
+    position: relative;
+    padding: 0.6em 2em;
+    border: mediumspringgreen solid 0.15em;
+    border-radius: 0.25em;
+    color: mediumspringgreen;
+    font-size: 1.5em;
+    font-weight: 600;
+    cursor: pointer;
+    overflow: hidden;
+    transition: border 300ms, color 300ms;
+    user-select: none;
+  }
+  
+  .expbutton p {
+    z-index: 1;
+  }
+  
+  .expbutton:hover {
+    color: #212121;
+  }
+  
+  .expbutton:active {
+    border-color: teal;
+  }
+  
+  .expbutton::after, .expbutton::before {
+    content: "";
+    position: absolute;
+    width: 9em;
+    aspect-ratio: 1;
+    background: mediumspringgreen;
+    opacity: 50%;
+    border-radius: 50%;
+    transition: transform 500ms, background 300ms;
+  }
+  
+  .expbutton::before {
+    left: 0;
+    transform: translateX(-8em);
+  }
+  
+  .expbutton::after {
+    right: 0;
+    transform: translateX(8em);
+  }
+  
+  .expbutton:hover:before {
+    transform: translateX(-1em);
+  }
+  
+  .expbutton:hover:after {
+    transform: translateX(1em);
+  }
+  
+  .expbutton:active:before,
+  .expbutton:active:after {
+    background: teal;
+  }

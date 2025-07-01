@@ -1,0 +1,27 @@
+.close-button {
+  float: right;
+  border: none;
+  background: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+input[type="radio"] {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.ohboy {
+  border-radius: 5px;
+}

@@ -1,0 +1,62 @@
+/* Tooltip container */
+#tooltip {
+
+    display: block;
+    padding: 0.5em;
+    background: white;
+    color: black;
+    border: solid black 2px;
+    max-width: 15em; /* Set max width for better control */
+    word-break: break-word; /* Ensures long words break correctly */
+    white-space: normal; /* Allows the text to wrap */
+    overflow-wrap: break-word; /* Safeguards text wrapping */
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    border-radius: 4px; /* Add a slight rounding to edges */
+    z-index: 1000; /* Keep tooltip on top */
+  
+  }
+  /* Style the tooltip arrow */
+  .floating-arrow {
+    width: 100px;
+    height: 1000px;
+    position: absolute;
+   
+    background-color: blue;
+    transform: rotate(45deg);
+    z-index: 9999;
+  }
+
+[data-popper-placement^="top"] > .tooltip-arrow {
+  bottom: -5px;
+}
+
+[data-popper-placement^="bottom"] > .tooltip-arrow {
+  top: -5px;
+}
+
+[data-popper-placement^="left"] > .tooltip-arrow {
+  right: -5px;
+}
+
+[data-popper-placement^="right"] > .tooltip-arrow {
+  left: -5px;
+}
+
+/* Styling for the floating tooltip arrow */
+.floating-arrow {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  color: green; /* Ensure the arrow has a visible color */
+}
+
+/* Additional tooltip styles (if needed) */
+#tooltip {
+  border-radius: 4px;
+  padding: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+  color: black; /* Ensure the text inside tooltip is readable */
+  background-color: white; /* Ensure tooltip background stands out */
+  transition: opacity 0.2s ease-in-out; /* Smooth transition */
+}

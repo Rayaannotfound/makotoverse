@@ -1,0 +1,74 @@
+.fading-text-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  overflow: hidden;
+}
+
+.fading-rainbow-text {
+  font-size: 3em;
+  font-weight: bold;
+  color: #62036e;
+  background-image: linear-gradient(45deg, #f06, #aef, #06f, #fae, #efa, #af0, #f60);
+  background-size: 100% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  align-items: center;
+  animation: rainbow-text-fade 3s ease-in-out infinite, background-move 5s linear infinite;
+}
+
+@keyframes rainbow-text-fade {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+@keyframes background-move {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1px;
+}
+
+.stats-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.image-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.centered-image {
+  max-width: 300px;
+  margin-bottom: 1rem;
+}
+
+.statsback {
+  width: 100%;
+  height: 100vh;
+  background: no-repeat center center;
+  background-size: cover;
+}
+
+.statsback::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('../photos/gojosat.gif') no-repeat center center;
+  background-size: cover;
+  opacity: 0.1;
+  pointer-events: none;
+}

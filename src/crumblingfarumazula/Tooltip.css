@@ -1,0 +1,16 @@
+.truesttooltip {
+  display: block;
+  position: absolute;
+  z-index: 1000;
+
+  width: 10em;
+  padding: 0.5em;
+
+  background: white;
+  color: black;
+  border: 2px solid black;
+
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}

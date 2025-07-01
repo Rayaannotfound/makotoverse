@@ -1,0 +1,38 @@
+.icon-transition {
+  color: white;
+}
+
+.icon-transition:hover {
+  color: blue;
+}
+
+.custom-checkbox input {
+  display: none;
+}
+
+.custom-checkbox .checkbox-custom {
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  background-color: #fff;
+  border: 2px solid #007bff;
+  cursor: pointer;
+  position: relative;
+}
+
+.custom-checkbox input:checked + .checkbox-custom::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #007bff;
+  font-size: 18px;
+}
+
+.tisimportant {
+  color: red;
+  top: 10;
+  right: 0;
+  font-size: 60px;
+}

@@ -1,0 +1,20 @@
+
+
+.sidebar p:hover {
+  flex: 4;
+}
+
+.sidebar p span {
+  min-width: 14em;
+  padding: .5em;
+  text-align: center;
+  transform: rotate(-90deg);
+  transition: all .5s;
+  text-transform: uppercase;
+  color: #ff568e;
+  letter-spacing: .1em;
+}
+
+.sidebar p:hover span {
+  transform: rotate(0);
+}

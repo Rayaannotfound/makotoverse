@@ -1,0 +1,55 @@
+
+.dateModal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgb(33, 126, 231);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    width: 60%;
+    max-width: 600px; 
+    animation: fadeInOut 13s ease-out forwards; 
+  }
+  
+  .dateSlideContainer {
+    overflow: hidden;
+  }
+  
+  .dateSlide {
+    animation: slideUp 13s ease-out forwards;
+  }
+  
+  @keyframes fadeInOut {
+    0% {
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  
+  @keyframes slideUp {
+    0% {
+      transform: translateY(100%);
+    }
+    50% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-100%);
+    }
+  }
+  
+  .white {
+    color: black;
+  }
+  

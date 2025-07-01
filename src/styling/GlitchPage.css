@@ -1,0 +1,76 @@
+.glitch-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #000;
+  overflow: hidden;
+}
+
+.glitch-effect {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  animation: glitch-animation 5s infinite;
+  background-image: url('../photos/glitch-background.jpg');
+}
+
+.evil-eyes {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150px;
+  height: 60px;
+  background-color: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  animation: blink-animation 3s infinite;
+}
+
+.evil-smile {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 40px;
+  border-bottom-left-radius: 40px;
+  border-bottom-right-radius: 40px;
+  border: 2px solid #fff;
+  border-top: none;
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0;
+  animation: smile-animation 3s infinite;
+}
+
+.glitch-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #fff;
+}
+
+@keyframes glitch-animation {
+}
+
+@keyframes blink-animation {
+  0%, 100% {
+    height: 60px;
+  }
+  50% {
+    height: 20px;
+  }
+}
+
+@keyframes smile-animation {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}

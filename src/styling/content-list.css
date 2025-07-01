@@ -1,0 +1,88 @@
+.content-item {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.text-hidden {
+  display: none;
+}
+
+.content-box {
+  display: inline-block;
+  width: 150px;
+  height: 100px;
+  background-color: #3498db;
+  color: #fff;
+  text-align: center;
+  line-height: 100px;
+  margin: 10px;
+  text-decoration: none;
+  overflow: auto;
+}
+
+.content {
+  margin-left: 220px;
+  padding: 20px;
+}
+
+.allstudy {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: no-repeat center center;
+  background-size: cover;
+}
+
+.allstudy::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('../photos/allstudy.jpg') no-repeat center center;
+  background-size: cover;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.imstudying {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: no-repeat center center;
+  background-size: cover;
+}
+
+.imstudying::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('../photos/dekustudy.jpg') no-repeat center center;
+  background-size: cover;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.rainbow-text {
+  background-image: linear-gradient(45deg, #FF0000, #FF9900, #FFFF00, #00FF00, #0000FF, #9900FF, #FF00FF);
+  -webkit-background-clip: text;
+  color: transparent;
+  font-weight: bold;
+}
+
+.rainbow-text-para {
+  background-image: linear-gradient(45deg, #FF0000, #FF9900, #FFFF00, #00FF00, #0000FF, #9900FF, #FF00FF);
+  -webkit-background-clip: text;
+  color: transparent;
+  font-weight: bold;
+}
+
+.page {
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
