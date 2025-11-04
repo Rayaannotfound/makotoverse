@@ -10,10 +10,13 @@ async function loginUser(credentials) {
     },
     body: JSON.stringify(credentials),
   }).then((response) => {
+    
     if (!response.ok) {
       throw new Error("Invalid username or password");
     }
-    return response.json();
+    const readdata = response.json();
+    
+    return readdata;
   });
 }
 
@@ -31,6 +34,7 @@ export default function Login({ setToken }) {
         password,
       });
       setToken(token);
+     
     } catch (err) {
       setError(err.message);
     }
@@ -42,13 +46,13 @@ export default function Login({ setToken }) {
       <form onSubmit={handleSubmit}>
         <label>
           <p>Username</p>
-          <input type="text" onChange={(e) => setUserName(e.target.value)} />
+          <input type="text" onChange={(e) => setUserName(e.target.value)} className="login-form" />
         </label>
         <label>
           <p>Password</p>
           <input
             type="password"
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)} className="login-form"
           />
         </label>
         {error && <p style={{ color: "red" }}>{error}</p>}

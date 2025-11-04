@@ -1,0 +1,77 @@
+
+
+:root{
+  --paper-bg: #fffdf8;
+  --paper-line: #c8d3e6;   
+  --paper-margin: #f19999; 
+  --ink: #1f2937;
+}
+
+.paper-shell{
+  padding: 24px; 
+}
+
+.paper{
+  position: relative;
+  max-width: 640px;
+  min-height: 560px;
+  margin: 0 auto;
+  padding: 40px 28px 48px 68px; 
+  border-radius: 14px;
+  background:
+    
+    linear-gradient(90deg, transparent 54px, var(--paper-margin) 54px 56px, transparent 56px),
+    
+    repeating-linear-gradient(
+      180deg,
+      var(--paper-bg) 0px,
+      var(--paper-bg) 28px,
+      var(--paper-line) 29px,
+      var(--paper-bg) 60px
+    );
+  background-color: var(--paper-bg);
+  box-shadow:
+    0 20px 40px rgba(0,0,0,.12),
+    0 2px 6px rgba(0,0,0,.06);
+  overflow: hidden;
+}
+
+
+.paper::before{
+  content:"";
+  position:absolute;
+  left:14px;
+  top:50px;
+  width:12px;
+  height: calc(100% - 100px);
+  background:
+    radial-gradient(circle at 6px 6px, rgba(0,0,0,.15) 0 6px, transparent 7px) 0 0 / 12px 120px repeat-y;
+  pointer-events:none;
+  opacity:.35;
+}
+
+.paper::after{
+  content:"";
+  position:absolute; inset:0;
+  background:
+    radial-gradient(1200px 400px at 20% 10%, rgba(0,0,0,.03), transparent 60%),
+    radial-gradient(800px 300px at 80% 20%, rgba(0,0,0,.02), transparent 60%);
+  mix-blend-mode: multiply;
+  pointer-events:none;
+}
+
+.paper-title{
+  font-family: "Caveat", cursive, ui-rounded, system-ui;
+  font-size: 2rem;
+  margin: 0 0 8px;
+  color: var(--ink);
+}
+
+.paper-body{
+  font-family: "Caveat", cursive, ui-rounded, system-ui;
+  font-size: 1.7rem;
+  line-height: 1.45;
+  color: #1b1b1b;
+  white-space: pre-wrap;   
+  word-break: break-word;
+}

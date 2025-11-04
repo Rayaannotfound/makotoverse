@@ -1,142 +1,132 @@
-import React, { useState, useEffect } from "react";
+import CreateStatModal from "./CreateStats";
+
+import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import Gojo from "../photos/Gojo.png";
-import "../styling/gojo.css";
-import "../styling/button.css";
-import "../styling/modal.css";
-import "../styling/stats.css";
-import { Link } from "react-router-dom";
-import StatPopup from "../Improvement/StatPopup";
+
 
 const Stats = () => {
-  const [stats, setStats] = useState({});
+  const [stats, setStats] = useState([]); 
   const [inputs, setInputs] = useState({});
   const [showPopup, setShowPopup] = useState(false);
-
-  const openModal = () => setShowPopup(true);
-  const closeModal = () => setShowPopup(false);
-
-  const bubbleStyle = {
-    position: "absolute",
-    left: "100%",
-    marginLeft: "20px",
-    padding: "20px",
-    backgroundColor: "#fff",
-    border: "1px solid #000",
-    borderRadius: "15px",
-    color: "white",
-  };
-
-  const triangleStyle = {
-    position: "absolute",
-    top: "50%",
-    left: "-20px",
-    transform: "translateY(-50%) rotate(90deg)",
-    width: 0,
-    height: 0,
-    borderLeft: "10px solid transparent",
-    borderRight: "10px solid transparent",
-    borderTop: "10px solid #fff",
-  };
+   const [showCreate, setShowCreate] = useState(false);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/stats")
-      .then((response) => {
-        const data = response.data;
-        setStats(data);
-        setInputs(
-          Object.keys(data).reduce((acc, key) => ({ ...acc, [key]: "" }), {})
-        );
-      })
-      .catch((error) => console.error("Error fetching stats", error));
-  }, []);
+  const token = localStorage.getItem("token");
+
+  axios.get("http://localhost:5000/api/stats", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then(({ data }) => {
+      
+      const rows = data.map(r => ({
+        statName: r.statName,
+        points: Number(String(r.points).replace(/,/g, "")) || 0,
+      }));
+      setStats(rows);
+      setInputs(Object.fromEntries(rows.map(r => [r.statName, ""])));
+    })
+    .catch(err => console.error("Error fetching stats", err));
+}, []);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setInputs((prev) => ({ ...prev, [name]: value }));
+    const { name, value } = e.target; 
+    setInputs(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const dataToSend = Object.keys(inputs).reduce((acc, key) => {
-      if (inputs[key]) {
-        acc[key] = parseInt(stats[key] || 0, 10) + parseInt(inputs[key], 10);
-      }
-      return acc;
-    }, {});
+
+   
+    const current = Object.fromEntries(stats.map(s => [s.statName, s.points]));
+    const payload = Object.fromEntries(
+      Object.entries(inputs)
+        .filter(([, v]) => v !== "" && v != null)
+        .map(([name, v]) => [name, (Number(current[name]) || 0) + Number(v)])
+    );
+
+    if (Object.keys(payload).length === 0) return;
 
     try {
-      await axios.post("http://localhost:5000/api/update-stats", dataToSend);
-      setStats((prev) => ({ ...prev, ...dataToSend }));
-      setInputs(Object.keys(inputs).reduce((acc, key) => ({ ...acc, [key]: "" }), {}));
-    } catch (error) {
-      console.error("Error posting updated stats:", error);
+      const token = localStorage.getItem("token");
+      await axios.post("http://localhost:5000/api/update-stats", payload, { headers: {
+      Authorization: `Bearer ${token}`, 
+    },});
+
+      
+      setStats(prev =>
+        prev.map(s =>
+          payload[s.statName] != null ? { ...s, points: payload[s.statName] } : s
+        )
+      );
+
+      
+      setInputs(prev => Object.fromEntries(Object.keys(prev).map(k => [k, ""])));
+    } catch (err) {
+      console.error("Error posting updated stats:", err);
     }
   };
 
-  const calcAverage = (keys, divisor) =>
-    (keys.reduce((sum, key) => sum + (stats[key] || 0), 0) / divisor).toFixed(2);
+  
+  const pointsByName = useMemo(
+    () => Object.fromEntries(stats.map(s => [s.statName, s.points])),
+    [stats]
+  );
+  const avg = (names) =>
+    (names.reduce((sum, n) => sum + (Number(pointsByName[n]) || 0), 0) / names.length).toFixed(2);
 
   return (
     <div className="statsback">
+
+       <button className="button-link" onClick={() => setShowCreate(true)}>+ Create Stat</button>
       <div className="container">
-        <Link to="/status">
-          <button className="button-link">Status</button>
-        </Link>
-        <Link to="/mastery">
-          <button className="button-link">Mastery</button>
-        </Link>
+      
 
         <form onSubmit={handleSubmit} className="stats-form">
-          {Object.entries(stats).map(([key, value]) => (
-            <div key={key} className="stats-item">
-              <label>{key}: </label>
-              <span>{value}</span>
-              <input
-                type="number"
-                name={key}
-                value={inputs[key] || ""}
-                onChange={handleInputChange}
-              />
-            </div>
-          ))}
+       <div className="stats-grid">
 
-          <p>DARKNESS: {calcAverage(["DOM", "RES", "VI", "ARC", "INS"], 5)}</p>
-          <p>
-            HERO:{" "}
-            {calcAverage(["AT", "ARC", "HONOUR", "INS", "DOM", "LOVE"], 6)}
-          </p>
-          <p>
-            HEALTH:{" "}
-            {calcAverage(["VI", "ST", "EN", "RES", "LOVE", "HONOUR", "RES"], 5)}
-          </p>
-          <p>
-            KNOWLEDGE:{" "}
-            {calcAverage(["MA", "INTELLIGENCE", "FAI"], 3)}
-          </p>
+
+  {stats.map((stat) => (
+    <React.Fragment key={stat.statName}>
+      <div className="stat-label">{stat.statName}</div>
+      <label className="stat-points">
+        {Number(stat.points).toLocaleString()}
+      </label>
+      <input
+        className="input stat-input"   
+        type="number"
+        name={stat.statName}
+        value={inputs[stat.statName] ?? ""}
+        onChange={handleInputChange}
+        placeholder="0"
+        min={0}
+        step={1}
+      />
+    </React.Fragment>
+  ))}
+</div>
+
+
+          <p>DARKNESS: {avg(["DOM", "RES", "VI", "ARC", "INS"])}</p>
+          <p>HERO: {avg(["AT", "ARC", "HONOUR", "INS", "DOM", "LOVE"])}</p>
+          <p>HEALTH: {avg(["VI", "ST", "EN", "RES", "LOVE", "HONOUR"])}</p>
+          <p>KNOWLEDGE: {avg(["MA", "INTELLIGENCE", "FAI"])}</p>
 
           <button type="submit">Update Stats</button>
         </form>
 
-        <button onClick={openModal} className="button-info">
-          Help
-        </button>
-        {showPopup && <StatPopup onClose={closeModal} />}
-
-        <div className="image-container">
-          <div style={bubbleStyle}>
-            <div style={triangleStyle}></div>
-            Hey there!
-          </div>
-          <img src={Gojo} alt="Gojo" className="centered-image" />
-          <div className="fading-text-container">
-            <h1 className="fading-rainbow-text">
-              Picture a stronger version of yourself in the future
-            </h1>
-          </div>
-        </div>
+    
       </div>
+
+       <CreateStatModal
+        open={showCreate}
+        onClose={() => setShowCreate(false)}
+        onCreated={(newStat) => {
+        
+          setStats(prev => [...prev, { statName: newStat.statName, points: 0 }]);
+        }}
+      />
     </div>
   );
 };

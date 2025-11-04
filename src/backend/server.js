@@ -5,6 +5,7 @@ const cors = require("cors");
 const moment = require("moment"); 
 const bodyParser = require("body-parser");
 const cron = require("node-cron");
+require('dotenv').config()
 
 
 const app = express();
@@ -27,12 +28,14 @@ const db = mysql.createConnection({
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
 
+
 });
 
-
+const jwt = require("jsonwebtoken");
+const secret = process.env.DB_SECRET; 
 
 const saltRounds = 10;
-console.log("Shadow realm");
+console.log("Shadow realm activated!");
 db.connect((err) => {
   if (err) {
     console.error("Error connecting to MySQL:", err);
@@ -53,34 +56,116 @@ async function createUser(username, password) {
 }
 
 
+// createUser("Makoto", "Makotoverse123");
+
+
+function authenticateToken(req, res, next) {
+  console.log("this is the req", req);  
+  const authHeader = req.headers.authorization;
+  console.log("autherhead ", authHeader);
+  if (!authHeader) {
+    return res.status(401).json({ error: 'Missing Authorization header' });
+  }
+
+  const [scheme, token] = authHeader.split(' ');
+  if (scheme !== 'Bearer' || !token) {
+    return res.status(401).json({ error: 'Use "Authorization: Bearer <token>"' });
+  }
+
+  console.log("Authorization header received:", authHeader);
+
+  jwt.verify(token, secret, (err, payload) => {
+    console.log('JWT verify payload:', payload);
+    console.log('JWT verify error:', err);
+    console.log('JWT verify error name:', token);
+    if (err) {
+      console.error('JWT verify error:', err.name, err.message);
+  
+      return res.status(403).json({ error: 'Invalid or expired token' });
+      
+    }
+    if (!payload?.id) {
+    
+      return res.status(400).json({ error: 'Token missing id claim' });
+    }
+    req.user = payload;
+    next();
+  });
+}
+
 
 
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
 
-  db.query(
-    "SELECT * FROM login WHERE username = ?",
-    [username],
-    async (error, results) => {
-      if (error) {
-        return res.status(500).send("Internal server error");
-      }
-      if (results.length === 0) {
-        return res
-          .status(401)
-          .send({ message: "Invalid username or password" });
-      }
-
-      const user = results[0];
-      const match = await bcrypt.compare(password, user.password);
-      if (match) {
-        res.send({ token: "mamamiaihaveatoken" });
-      } else {
-        res.status(401).send({ message: "Invalid username or password" });
-      }
+  db.query("SELECT * FROM login WHERE username = ?", [username], async (error, results) => {
+    if (error) {
+      return res.status(500).json({ error: "Internal server error" });
     }
-  );
+    if (results.length === 0) {
+      return res.status(401).json({ message: "Invalid username or password" });
+    }
+
+    const user = results[0];
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.status(401).json({ message: "Invalid username or password" });
+    }
+
+    // Ensure we have an id value
+    const userId = user.id ?? user.ID ?? user.user_id;
+
+    const token = jwt.sign(
+      { id: userId, username: user.username },
+      secret,
+      { expiresIn: "70h" }
+    );
+
+    res.json({token: token });
+  });
 });
+
+  app.get("/api/betterstats/exists", authenticateToken, (req, res) => {
+    const raw = (req.query.name || "").trim();
+    const userId = req.user.id;
+    if (!raw) return res.status(400).json({ error: "Missing name" });
+
+    const name = raw.toUpperCase(); 
+    db.query("SELECT 1 FROM betterstats WHERE statName = ? AND userID = ? LIMIT 1", [name, userId], (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ exists: rows.length > 0 });
+    });
+  });
+
+   app.post("/api/betterstats", authenticateToken, (req, res) => {
+    let { statName, description } = req.body || {};
+    const userId = req.user.id;
+    statName = (statName || "").trim().toUpperCase();
+    description = (description || "").trim();
+
+    if (!statName || !/^[A-Z][A-Z0-9_]{1,31}$/.test(statName)) {
+      return res.status(400).json({ error: "Invalid statName format" });
+    }
+    if (!description || description.length > 2000) {
+      return res.status(400).json({ error: "Invalid description" });
+    }
+
+    db.query(
+      "INSERT INTO betterstats (statName, description, userID) VALUES (?, ?, ?)",
+      [statName, description, userId],
+      (err, result) => {
+        if (err) {
+          
+          if (err.code === "ER_DUP_ENTRY") {
+            return res.status(409).json({ error: "Stat name already exists" });
+          }
+          return res.status(500).json({ error: err.message });
+        }
+        res.status(201).json({ id: result.insertId, statName, description });
+      }
+    );
+  });
+
 
 app.post("/api/addData", (req, res) => {
   const { name, age } = req.body;
@@ -94,10 +179,10 @@ app.post("/api/addData", (req, res) => {
     res.json({ message: "Data added successfully" });
   });
 });
-const jwt = require("jsonwebtoken");
+
 const { Application } = require("discord.js");
 
-const secret = "your_jwt_secret";
+
 
 app.post("/api/news", (req, res) => {
   const { ID, Heading, Information } = req.body;
@@ -134,21 +219,19 @@ function DbQuery(sqlQuery, res) {
   db.query(sqlQuery, (error, results) => {
     if (error) {
       console.error("Error executing query:", error);
-      //(results);
+      
       res.status(500).json({ error: "Internal server error" });
     } else {
       res.json(results);
-      //(results);
     }
   });
 }
 app.get("/api/getNews/:ID", (req, res) => {
   const ID = req.params.ID; 
-  //("I am the ID", ID);
 
   const sqlQuery = `SELECT * FROM news_feed WHERE ${ID}`;
  
-  // Execute the SQL query and send the result as a response
+
   DbQuery(sqlQuery, res);
 });
 app.post("/api/postdiaryentry", (req, res) => {
@@ -163,7 +246,7 @@ app.post("/api/postdiaryentry", (req, res) => {
 
   const toDateTimeFormat = (date) => {
     const year = date.getFullYear();
-    const month = pad(date.getMonth() + 1); // getMonth() returns 0-11
+    const month = pad(date.getMonth() + 1); 
     const day = pad(date.getDate());
     const hours = pad(date.getHours());
     const minutes = pad(date.getMinutes());
@@ -186,7 +269,7 @@ app.post("/api/postdiaryentry", (req, res) => {
 
   const query = `INSERT INTO diary (Title, Morning, Afternoon, Evening, Night, Midnight, Notes, Completed, Date) VALUES (?,?,?,?,?,?,?, 1, '${formattedDate}')`;
 
-  //"INSERT INTO diary (Title, Morning, Afternoon, Evening, Night, Midnight, Notes, Completed, Date) VALUES ('Monday 26th feb','finished my essay','got to uni and attended a lecture. Almost voided my essay. But spoke to Oana and it was all good again','I went out to some shops and bought some cool stuff including a plush and 2 games','I\'m making this page','I\'ll hopefully be sleeping','should be a good day', 1, 2024-02-26 21:22:54)"
+  
   db.query(
     query,
     [Title, Morning, Afternoon, Evening, Night, Midnight, Notes, 1, dateObject],
@@ -264,7 +347,7 @@ app.get("/api/getHabits", (req, res) => {
 
 app.get("/api/flashcards/options/:id", async (req, res) => {
   const flashcardId = req.params.id;
-  //(flashcardId);
+
   const query = `SELECT OptionText, IsCorrect FROM options WHERE ${flashcardId}`;
 
   db.query(query, [flashcardId], (err, results) => {
@@ -443,30 +526,48 @@ app.delete("/api/deleteflashcards/:id", (req, res) => {
   });
 });
 
-app.get("/api/stats", (req, res) => {
-  db.query("SELECT * FROM newstats LIMIT 1", (err, result) => {
-    if (err) return res.status(500).send(err);
-    res.json(result[0]);
-  });
+app.get("/api/stats", authenticateToken, (req, res) => {
+  const userId = req.user.id;
+  db.query(
+    "SELECT statName, points FROM betterstats WHERE userID = ? ORDER BY statName", userId,
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json(rows); 
+    }
+  );
 });
 
-app.post("/api/update-stats", (req, res) => {
 
-  Object.entries(req.body).forEach(([key, value]) => {
+app.post("/api/update-stats", authenticateToken, async (req, res) => {
+  const entries = Object.entries(req.body); 
+  if (entries.length === 0) {
+    return res.status(400).json({ error: "No updates provided" });
+  }
 
+  const allowed = new Set([
+    "VI","ST","MA","AT","RES","EN","INTELLIGENCE","FAI","INS",
+    "ARC","HONOUR","DOM","ECHOES","DEX","LOVE"
+  ]);
+const userId = req.user.id;
+  const sql = "UPDATE betterstats SET points = ? WHERE statName = ? AND userID = ?";
+  const tasks = entries
+    .filter(([name]) => allowed.has(name))
+    .map(([name, points]) =>
+      new Promise((resolve, reject) =>
+        db.query(sql, [Number(points) || 0, name, userId],  (err, r) =>
+          err ? reject(err) : resolve(r)
+        )
+      )
+    );
 
-    const query = `UPDATE newstats SET ${key}=? `;
-
-    db.query(query, [value], (err, result) => {
-      if (err) {
-        res.status(500).json(err);
-        return;
-      }
-      res.json({ message: "Data added successfully" });
-
-    });
-  });
+  try {
+    await Promise.all(tasks);
+    res.json({ ok: true, updated: tasks.length });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
+
 
 app.get("/api/getLatestNews/", (req, res) => {
   const sqlQuery = `SELECT *
@@ -538,8 +639,10 @@ app.post("/api/postNewLevel/:Name", (req, res) => {
   });
 });
 
-//"INSERT INTO tasks (Title, Description, XP, isCompleted, Locked, Important, Deadline) VALUES ('One more!', 'LETS ', '10', 0, 0, 0, 2024-02-15)"
-app.post("/api/add-task", (req, res) => {
+
+app.post("/api/add-task", authenticateToken, (req, res) => {
+  console.log("Adding task...");
+  console.log("Request:", req);
   const {
     Title,
     Description,
@@ -553,8 +656,9 @@ app.post("/api/add-task", (req, res) => {
     Difficulty, 
     Progress, 
     Mastery,
+    
   } = req.body;
-
+const userId = req.user.id; 
   let isLocked = Locked || 0; 
   let isImportant = Important || 0; 
   let newDeadline = null; 
@@ -567,14 +671,14 @@ app.post("/api/add-task", (req, res) => {
       .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
   }
 
-  // Default values for optional fields
+
   let newAttribute = Attribute || null;
   let newAttributePoints = AttributePoints || 0;
   let newDifficulty = Difficulty || null;
   let newProgress = Progress || 0;
 
-  let query = `INSERT INTO tasks (Title, Description, XP, isCompleted, Locked, Important, Deadline, Category, Attribute, AttributePoints, Difficulty, Progress, Mastery) 
-               VALUES (?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+  let query = `INSERT INTO tasks (Title, Description, XP, isCompleted, Locked, Important, Deadline, Category, Attribute, AttributePoints, Difficulty, Progress, Mastery, userid) 
+               VALUES (?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
   db.query(
     query,
@@ -591,6 +695,7 @@ app.post("/api/add-task", (req, res) => {
       newDifficulty,
       newProgress,
       Mastery,
+      userId
     ],
     (err, result) => {
       if (err) {
@@ -602,10 +707,18 @@ app.post("/api/add-task", (req, res) => {
   );
 });
 
-app.get("/api/tasks", (req, res) => {
-  const sqlQuery = "SELECT * FROM tasks WHERE isCompleted=0 ORDER BY ID DESC;";
- 
-  DbQuery(sqlQuery, res);
+
+
+app.get("/api/tasks", authenticateToken, (req, res) => {
+  const userId = req.user.id;
+   console.log("Authenticated user ID:", userId);
+   console.log("User ID from token:", userId);
+   const sqlQuery = "SELECT * FROM tasks WHERE userid = ? AND isCompleted=0 ORDER BY ID DESC;";
+
+   db.query(sqlQuery, [userId], (err, results) => {
+    if (err) return res.status(500).send(err);
+    res.json(results);
+  });
 });
 app.get("/api/task/:Locked", (req, res) => {
   const taskId = req.params.Locked;
@@ -690,10 +803,10 @@ app.post("/api/complete-task/:id", (req, res) => {
     
       if (Attribute && AttributePoints) {
         
-        const updateStatsQuery = `UPDATE newstats SET ?? = ?? + ?`;
+        const updateStatsQuery = `UPDATE betterstats SET points = points + ? WHERE statName = ?`;
         db.query(
           updateStatsQuery,
-          [Attribute, Attribute, AttributePoints],
+          [AttributePoints, Attribute],
           (error) => {
             if (error) {
               return db.rollback(() => {
@@ -759,7 +872,7 @@ app.post("/api/reinstate-task/:id", (req, res) => {
   });
 });
 
-app.post("/api/update-task/:id", (req, res) => {
+app.post("/api/update-task/:id", authenticateToken, (req, res) => {
   const taskId = req.params.id;
   const {
     Title,
@@ -774,7 +887,7 @@ app.post("/api/update-task/:id", (req, res) => {
     Progress,
     Mastery,
   } = req.body;
-
+const userId = req.user.id;
   const updateTaskQuery = `
     UPDATE tasks 
     SET 
@@ -813,6 +926,7 @@ app.post("/api/update-task/:id", (req, res) => {
       newDifficulty,
       newProgress,
       Mastery,
+      userId,
     ],
     (err, result) => {
       if (err) {
@@ -824,7 +938,7 @@ app.post("/api/update-task/:id", (req, res) => {
   );
 });
 
-app.post("/api/clone-task", (req, res) => {
+app.post("/api/clone-task", authenticateToken, (req, res) => {
   const taskId = req.params.id;
   const {
     Title,
@@ -839,10 +953,11 @@ app.post("/api/clone-task", (req, res) => {
     Progress,
     Mastery,
   } = req.body;
-
+const userId = req.user.id;
+console.log(userId, "  <--- userId");
   const updateTaskQuery = `
-    INSERT INTO TASKS(Title, Description,XP, Locked, Important, Category,Attribute,AttributePoints,Difficulty,Progress,Mastery)
-    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+    INSERT INTO TASKS(Title, Description,XP, Locked, Important, Category,Attribute,AttributePoints,Difficulty,Progress,Mastery, userid)
+    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?)
    
   `;
 
@@ -867,6 +982,7 @@ app.post("/api/clone-task", (req, res) => {
       newDifficulty,
       newProgress,
       Mastery,
+      userId,
     ],
     (err, result) => {
       if (err) {
@@ -1022,19 +1138,6 @@ const quests = [
   { Title: "Learn about Kubernetes", Description: "Learn about Kubernetes", XP: 5000, Category: "Post game", Important: false, Attribute: "RES", AttributePoints: 14 },
   { Title: "Learn about cloud formation", Description: "Learn about cloud formation", XP: 5000, Category: "Post game", Important: false, Attribute: "RES", AttributePoints: 14 },
   { Title: "Learn about AWS bedrock", Description: "Learn about AWS bedrock", XP: 5000, Category: "Post game", Important: false, Attribute: "RES", AttributePoints: 14 },
-  { Title: "Go through AI badge", Description: "Go through AI badge", XP: 5000, Category: "Post game", Important: false, Attribute: "RES", AttributePoints: 14 },
-  { Title: "Go through Ai interview questions", Description: "Go through Ai interview questions", XP: 5000, Category: "Post game", Important: false, Attribute: "RES", AttributePoints: 14 },
-  { Title: "If no work, do GitHub + ai badge on the background", Description: "If no work, do GitHub + ai badge on the background", XP: 5000, Category: "Post game", Important: false, Attribute: "RES", AttributePoints: 14 },
-  { Title: "Get makotoverse on GitHub", Description: "Get makotoverse on GitHub", XP: 5000, Category: "Post game", Important: false, Attribute: "RES", AttributePoints: 14 },
-  { Title: "Get card game on GitHub", Description: "Get card game on GitHub", XP: 5000, Category: "Post game", Important: false, Attribute: "RES", AttributePoints: 14 },
-  { Title: "Get key pair value on GitHub", Description: "Get key pair value on GitHub", XP: 5000, Category: "Post game", Important: false, Attribute: "RES", AttributePoints: 14 },
-  { Title: "Get birthday celebration on GitHub", Description: "Get birthday celebration on GitHub", XP: 5000, Category: "Post game", Important: false, Attribute: "RES", AttributePoints: 14 },
-  { Title: "Get fathers day on GitHub", Description: "Get fathers day on GitHub", XP: 5000, Category: "Post game", Important: false, Attribute: "RES", AttributePoints: 14 },
-  { Title: "Get new source code on GitHub", Description: "Get new source code on GitHub", XP: 5000, Category: "Post game", Important: false, Attribute: "RES", AttributePoints: 14 },
-  { Title: "Get university adventure on GitHub", Description: "Get university adventure on GitHub", XP: 5000, Category: "Post game", Important: false, Attribute: "RES", AttributePoints: 14 },
-  { Title: "Tell  about your github", Description: "Tell about your ggithub", XP: 5000, Category: "Post game", Important: false, Attribute: "RES", AttributePoints: 14 },
-  { Title: "get that thing done", Description: "get that thing done", XP: 5000, Category: "Post game", Important: false, Attribute: "RES", AttributePoints: 14 },
-  { Title: "No lunch", Description: "No lunch", XP: 5000, Category: "Post game", Important: false, Attribute: "RES", AttributePoints: 14 },
   { Title: "Clear first badge", Description: "Clear first badge", XP: 5000, Category: "Post game", Important: false, Attribute: "RES", AttributePoints: 14 },
   { Title: "Buy pokemon cards", Description: "Buy pokemon cards", XP: 5000, Category: "Post game", Important: false, Attribute: "RES", AttributePoints: 14 },
   { Title: "Buy your sister 2ds pink unboxed", Description: "Buy your sister 2ds pink unboxed", XP: 5000, Category: "Post game", Important: false, Attribute: "RES", AttributePoints: 14 }
@@ -1059,7 +1162,7 @@ app.post("/api/add-daily-quests", (req, res) => {
       [Title, Description, XP, Category, Important, Attribute, AttributePoints],
       (error, results) => {
         if (error) throw error;
-        //("Task inserted", results.insertId);
+  
       }
     );
   });
@@ -1075,10 +1178,10 @@ app.get("/api/allcharacters", (req, res) => {
 app.post("/api/addLevelData/:Name", (req, res) => {
   const { Experience } = req.body;
   const Name = req.params.Name;
-  //(Name);
+ 
   const query = "UPDATE levels SET Experience = Experience + ? WHERE Name = ?";
   const selectQuery = "SELECT Experience FROM levels WHERE Name = ?";
-  //(query);
+
 
   db.query(selectQuery, [Name], (error, results) => {
     if (error) {

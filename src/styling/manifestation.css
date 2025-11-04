@@ -1,0 +1,92 @@
+.manifestation-title {
+    
+    text-align: center;
+    margin-top: 20px;   
+    font-family: 'Great Vibes', cursive, serif;
+    font-size: 5em;
+    text-align: center;
+    margin-top: 20px;
+    color: rgb(248, 229, 61);
+    text-shadow:
+        0 2px 4px #0008,
+        0 0 10px rgb(182, 63, 230),
+        0 0 20px #fff7;
+    letter-spacing: 2px;
+    font-weight: bold;
+}
+.manifestation-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 23px; 
+}
+.manifestation-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-image: url("../photos/manifestation-background.jpg");
+}
+.manifestation-container p, summary {
+    font-weight: bold;
+    font-size: 1.3em;
+    color: #fff;
+    background: rgba(74, 0, 51, 0.7); 
+    padding: 1em 2em;
+    border-radius: 16px;
+    text-shadow: 0 2px 8px #000a, 0 0 2px #fff8;
+    margin: 1.5em auto;
+    max-width: 900px;
+    box-shadow: 0 4px 24px #0002;
+    font-family:Verdana, Geneva, Tahoma, sans-serif
+}
+.manifestation-container label {
+    cursor: pointer;
+    margin-top: 2em;
+    font-size: 1.5em;
+    color: #ffb6d5; 
+    background: rgba(74, 0, 51, 0.7);
+}
+.manifestation-placement{
+
+    display: flex;
+   
+    margin-top: 2em;
+    font-size: 1.5em;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+   
+    box-shadow: 0 4px 24px #0002;
+    margin-top: 20px;
+}
+
+.manifestation-button{
+
+    background-color: #4a0033; 
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 98px;
+    cursor: pointer;
+    font-size: 3.2em;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-family:Verdana, Geneva, Tahoma, sans-serif
+}
+
+.manifestation-button:hover{
+ background-color: #ffb6d5; 
+    color: #4a0033;           
+    transform: scale(1.05);
+}
+
+.manifestation-fadein {
+    opacity: 0;
+    animation: fadeIn 0.6s forwards;
+}
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}

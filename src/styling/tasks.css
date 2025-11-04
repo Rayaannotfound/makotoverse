@@ -91,6 +91,14 @@
   font-size: 15px;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  display: flex;             
+  
+  flex-direction: column;    
+  justify-content:center;    
+  align-items: center;
+  
+   
+  text-align:justify;
 }
 
 .checkmark {

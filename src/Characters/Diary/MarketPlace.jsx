@@ -18,11 +18,7 @@ function PopoverExample() {
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h2>Modal definitions</h2>
             <p>
-              Modals are used for user interaction before returning to the main
-              UI and usually are triggered through clicking or automatically by
-              a system event. It might be used to confirm a decision by a user
-              and it blocks out all the other interactive parts of a page until
-              the user makes a confirmation or exits out of the modal
+              Oh I'm still making this. Come back in 8 years
             </p>
             <button onClick={() => setShowModal(false)}>Close</button>
           </div>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "../../styling/diary.css";
+import Paper from "./Paper";
 
 function DiaryForm({ onSubmit }) {
   const [formData, setFormData] = useState({
@@ -47,7 +48,7 @@ function DiaryForm({ onSubmit }) {
   ];
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div>    <form onSubmit={handleSubmit}>
       <h2>Diary</h2>
       {fields.map((field) => (
         <textarea
@@ -62,6 +63,18 @@ function DiaryForm({ onSubmit }) {
       ))}
       <button type="submit">Submit</button>
     </form>
+<Paper
+  title={formData.Title}
+  morning={formData.Morning}
+  afternoon={formData.Afternoon}
+  evening={formData.Evening}
+  night={formData.Night}
+  midnight={formData.Midnight}
+  notes={formData.Notes}
+/>
+
+    </div>
+
   );
 }
 

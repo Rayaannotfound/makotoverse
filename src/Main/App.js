@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./security/AuthContext";
 import useToken from "./security/useToken";
 import Login from "./security/Login";
+import Register from "./security/RegisterForm";
 import Navigation from "../Navigation/Navigation";
 import Homepage from "./homekoto";
 import GlitchPage from "../utils/Glitch";
@@ -30,6 +31,10 @@ import Popup from "../utils/Timepopup";
 import Levelone from "../utils/LevelOne.jsx";
 import MarketPlace from "../Characters/Diary/MarketPlace.jsx";
 import SkillTree from "../skilltree/skilltree.jsx";
+import SpinDaWheel from "../utilities/SpinDaWheel";
+import Manifestation from "../utilities/Manifestation.jsx";
+import { GuestOnly } from "./security/Guards.jsx";
+
 
 const App = () => {
   const { token, setToken } = useToken();
@@ -45,13 +50,31 @@ const App = () => {
   if (!token) {
     return <Login setToken={setToken} />;
   }
+  fetch("/protected-route", { headers: { Authorization: `Bearer ${token}` } })
+  .then(res => {
+    if (res.status === 401 || res.status === 403) {
+      // Clear app data
+      localStorage.clear();
+      sessionStorage.clear();
+      // Redirect to login
+      window.location.href = "/login";
+    }
+    return res.json();
+  });
 
   return (
     <AuthProvider>
       <BrowserRouter>
         <Navigation />
         {showPopup && <Popup />}
+
+       
         <Routes>
+            <Route element={<GuestOnly />}>
+            <Route path="/login" element={<Login setToken={(t) => localStorage.setItem("token", t?.token)} />} />
+               </Route>
+                
+        <Route path="/register" element={<Register setToken={(t) => localStorage.setItem("token", t?.token)} />} />
           <Route path="/" element={<Homepage />} />
           <Route path="/discovery" element={<DiscoveryPage />} />
           <Route path="/status" element={<Statuses />} />
@@ -76,7 +99,10 @@ const App = () => {
           <Route path="/levelone" element={<Levelone />} />
           <Route path="/marketplace" element={<MarketPlace />} />
           <Route path="/skills" element={<SkillTree />} />
+          <Route path="/wheel" element={<SpinDaWheel />} />
+          <Route path="/manifestation" element={<Manifestation />} />
           <Route path="*" element={<GlitchPage />} />
+
         </Routes>
       </BrowserRouter>
     </AuthProvider>

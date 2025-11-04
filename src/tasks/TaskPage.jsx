@@ -25,7 +25,16 @@ import ProgressBar from "../utilities/ProgressBar";
 import CloneTask from "../tasks/CloneTask";
 import Draggable from "react-draggable";
 
+
 const BASE_URL = "localhost:5000";
+
+
+import { utils, animate, anime, stagger } from 'animejs';
+
+
+
+
+
 
 const TasksPage = () => {
   const [tasks, setTasks] = useState([]);
@@ -41,6 +50,8 @@ const TasksPage = () => {
 
   useEffect(() => {
     fetchTasks();
+
+
   }, [importantFilter, selectedCategory, excludeDailyQuest, searchQuery]);
 
   const handleIconClick = (taskData) => {
@@ -55,7 +66,18 @@ const TasksPage = () => {
 
   const fetchTasks = async () => {
     try {
-      const response = await axios.get(`http://${BASE_URL}/api/tasks`);
+      const token = localStorage.getItem("token");
+     
+if (!token) {
+  localStorage.clear();
+  sessionStorage.clear();
+  window.location.reload();
+}
+      const response = await axios.get(`http://${BASE_URL}/api/tasks`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
       let fetchedTasks = response.data;
 
       if (importantFilter === 1) {
@@ -107,7 +129,13 @@ const TasksPage = () => {
 
   const handleAddTask = async (task) => {
     try {
-      await axios.post(`http://${BASE_URL}/api/add-task`, task);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        localStorage.clear();
+      }
+      await axios.post(`http://${BASE_URL}/api/add-task`, task, { headers: {
+      Authorization: `Bearer ${token}`, 
+    },});
       setIsModalOpen(false);
       setShowTaskAddedPopup(true);
       fetchTasks();
@@ -310,7 +338,6 @@ const TasksPage = () => {
             const daysLeft = deadline.diff(today, "days") + 1;
 
             return (
-              <Draggable handle=".drag-handle" key={task.ID}>
                 <div className="roll-in-blurred-left">
                   <div className="task-box">
                     <div className="drag-handle" style={{ cursor: "move" }}>
@@ -391,7 +418,6 @@ const TasksPage = () => {
                     </div>
                   </div>
                 </div>
-              </Draggable>
             );
           })
         )}
@@ -437,9 +463,12 @@ const Popup = ({ onClose }) => {
 
 const handleUpdateTask = async (updatedTask) => {
   try {
+    const token = localStorage.getItem("token");
     await axios.post(
       `http://${BASE_URL}/api/update-task/ID=${updatedTask.ID}`,
-      updatedTask
+      updatedTask, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      }
     );
     window.location.reload();
     setIsUpdateModalOpen(false);
@@ -449,8 +478,12 @@ const handleUpdateTask = async (updatedTask) => {
 };
 
 const handleCloneTask = async (updatedTask) => {
+
   try {
-    await axios.post(`http://${BASE_URL}/api/clone-task`, updatedTask);
+     const token = localStorage.getItem("token");
+    await axios.post(`http://${BASE_URL}/api/clone-task`, updatedTask, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
     window.location.reload();
     setIsUpdateModalOpen(false);
   } catch (error) {
